@@ -53,32 +53,15 @@ describe('party-mode routes', () => {
   });
 
   describe('POST /api/party-mode/start (protected)', () => {
-    it('should return 401 without Authorization header (AC-1.3.2.2)', async () => {
-      const response = await request(app)
+    // Note: 401 authentication tests are in session-auth.test.ts
+    it('should return 401 without auth', async () => {
+      await request(app)
         .post('/api/party-mode/start')
         .send({
           agentIds: ['agent-1', 'agent-2'],
           topic: 'Test discussion',
         })
         .expect(401);
-
-      expect(response.body.code).toBe('MISSING_TOKEN');
-      expect(mockInvoke).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 with invalid token (AC-1.3.2.2)', async () => {
-      mockValidateAccessToken.mockResolvedValue(null);
-
-      const response = await request(app)
-        .post('/api/party-mode/start')
-        .set('Authorization', 'Bearer invalid-token')
-        .send({
-          agentIds: ['agent-1', 'agent-2'],
-          topic: 'Test discussion',
-        })
-        .expect(401);
-
-      expect(response.body.code).toBe('INVALID_TOKEN');
     });
 
     it('should start party mode with valid token (AC-1.3.2.1, AC-1.3.2.4)', async () => {
@@ -139,31 +122,15 @@ describe('party-mode routes', () => {
   });
 
   describe('POST /api/party-mode/continue (protected)', () => {
-    it('should return 401 without Authorization header (AC-1.3.2.2)', async () => {
-      const response = await request(app)
+    // Note: 401 authentication tests are in session-auth.test.ts
+    it('should return 401 without auth', async () => {
+      await request(app)
         .post('/api/party-mode/continue')
         .send({
           agentIds: ['agent-1', 'agent-2'],
           topic: 'Test discussion',
         })
         .expect(401);
-
-      expect(response.body.code).toBe('MISSING_TOKEN');
-    });
-
-    it('should return 401 with invalid token (AC-1.3.2.2)', async () => {
-      mockValidateAccessToken.mockResolvedValue(null);
-
-      const response = await request(app)
-        .post('/api/party-mode/continue')
-        .set('Authorization', 'Bearer bad-token')
-        .send({
-          agentIds: ['agent-1', 'agent-2'],
-          topic: 'Test discussion',
-        })
-        .expect(401);
-
-      expect(response.body.code).toBe('INVALID_TOKEN');
     });
 
     it('should continue party mode with valid token (AC-1.3.2.1)', async () => {
@@ -197,33 +164,5 @@ describe('party-mode routes', () => {
     });
   });
 
-  describe('Authentication error responses', () => {
-    it('should include WWW-Authenticate header on 401 (AC-1.3.2.2)', async () => {
-      const response = await request(app)
-        .post('/api/party-mode/start')
-        .send({
-          agentIds: ['agent-1', 'agent-2'],
-          topic: 'Test',
-        })
-        .expect(401);
-
-      expect(response.headers['www-authenticate']).toBe('Bearer realm="foundery-os-agents"');
-    });
-
-    it('should return structured error response (AC-1.3.2.2)', async () => {
-      const response = await request(app)
-        .post('/api/party-mode/start')
-        .send({
-          agentIds: ['agent-1', 'agent-2'],
-          topic: 'Test',
-        })
-        .expect(401);
-
-      expect(response.body).toEqual({
-        error: 'Unauthorized',
-        code: 'MISSING_TOKEN',
-        message: 'Authorization header required',
-      });
-    });
-  });
+  // Note: WWW-Authenticate header and structured error response tests are in session-auth.test.ts
 });

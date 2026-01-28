@@ -100,27 +100,12 @@ describe('invoke routes', () => {
   });
 
   describe('POST /api/agents/invoke (protected)', () => {
-    it('should return 401 without Authorization header (AC-1.3.2.2)', async () => {
-      const response = await request(app)
+    // Note: 401 authentication tests are in session-auth.test.ts
+    it('should return 401 without auth', async () => {
+      await request(app)
         .post('/api/agents/invoke')
         .send({ agentId: 'test', message: 'hello' })
         .expect(401);
-
-      expect(response.body.code).toBe('MISSING_TOKEN');
-      expect(mockInvoke).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 with invalid token (AC-1.3.2.2)', async () => {
-      mockValidateAccessToken.mockResolvedValue(null);
-
-      const response = await request(app)
-        .post('/api/agents/invoke')
-        .set('Authorization', 'Bearer invalid-token')
-        .send({ agentId: 'test', message: 'hello' })
-        .expect(401);
-
-      expect(response.body.code).toBe('INVALID_TOKEN');
-      expect(mockInvoke).not.toHaveBeenCalled();
     });
 
     it('should invoke agent with valid token (AC-1.3.2.1, AC-1.3.2.4)', async () => {
@@ -155,15 +140,6 @@ describe('invoke routes', () => {
         .set('Authorization', 'Bearer valid-token')
         .send({}) // Missing agentId and message
         .expect(400);
-    });
-
-    it('should include WWW-Authenticate header on 401 response (AC-1.3.2.2)', async () => {
-      const response = await request(app)
-        .post('/api/agents/invoke')
-        .send({ agentId: 'test', message: 'hello' })
-        .expect(401);
-
-      expect(response.headers['www-authenticate']).toBe('Bearer realm="foundery-os-agents"');
     });
   });
 });

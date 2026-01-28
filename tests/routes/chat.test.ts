@@ -55,26 +55,12 @@ describe('chat routes', () => {
   });
 
   describe('POST /api/chat (protected)', () => {
-    it('should return 401 without Authorization header (AC-1.3.2.2)', async () => {
-      const response = await request(app)
+    // Note: 401 authentication tests are in session-auth.test.ts
+    it('should return 401 without auth', async () => {
+      await request(app)
         .post('/api/chat')
         .send({ agentId: 'test', message: 'hello' })
         .expect(401);
-
-      expect(response.body.code).toBe('MISSING_TOKEN');
-      expect(mockInvoke).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 with invalid token (AC-1.3.2.2)', async () => {
-      mockValidateAccessToken.mockResolvedValue(null);
-
-      const response = await request(app)
-        .post('/api/chat')
-        .set('Authorization', 'Bearer invalid-token')
-        .send({ agentId: 'test', message: 'hello' })
-        .expect(401);
-
-      expect(response.body.code).toBe('INVALID_TOKEN');
     });
 
     it('should process chat with valid token (AC-1.3.2.1, AC-1.3.2.4)', async () => {
@@ -116,25 +102,12 @@ describe('chat routes', () => {
   });
 
   describe('POST /api/chat/stream (protected)', () => {
-    it('should return 401 without Authorization header (AC-1.3.2.2)', async () => {
-      const response = await request(app)
+    // Note: 401 authentication tests are in session-auth.test.ts
+    it('should return 401 without auth', async () => {
+      await request(app)
         .post('/api/chat/stream')
         .send({ agentId: 'test', message: 'hello' })
         .expect(401);
-
-      expect(response.body.code).toBe('MISSING_TOKEN');
-    });
-
-    it('should return 401 with invalid token (AC-1.3.2.2)', async () => {
-      mockValidateAccessToken.mockResolvedValue(null);
-
-      const response = await request(app)
-        .post('/api/chat/stream')
-        .set('Authorization', 'Bearer bad-token')
-        .send({ agentId: 'test', message: 'hello' })
-        .expect(401);
-
-      expect(response.body.code).toBe('INVALID_TOKEN');
     });
 
     it('should stream with valid token (AC-1.3.2.1)', async () => {
