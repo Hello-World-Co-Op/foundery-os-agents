@@ -1,5 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { agentService, type AgentInvocation } from '../services/agent-service.js';
+import {
+  requireSession,
+  type AuthenticatedRequest,
+} from '../middleware/session-auth.js';
 
 export const invokeRouter = Router();
 
@@ -13,11 +17,14 @@ interface InvokeRequestBody {
 /**
  * POST /agents/invoke
  * Invoke an agent with a message and get a response
+ *
+ * @requires Valid session token (AC-1.3.2.1)
+ * @see AC-1.3.2.4 - Uses verified userId from session
  */
-invokeRouter.post('/invoke', async (req: Request, res: Response) => {
+invokeRouter.post('/invoke', requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as InvokeRequestBody;
-    const userId = req.headers['x-user-id'] as string || 'anonymous';
+    const userId = (req as AuthenticatedRequest).userId;
 
     if (!body.agentId || !body.message) {
       res.status(400).json({

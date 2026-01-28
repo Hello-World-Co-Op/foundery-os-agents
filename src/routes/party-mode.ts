@@ -1,5 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { agentService, type AgentInvocation } from '../services/agent-service.js';
+import {
+  requireSession,
+  type AuthenticatedRequest,
+} from '../middleware/session-auth.js';
 
 export const partyModeRouter = Router();
 
@@ -26,11 +30,14 @@ interface PartyModeResponse {
 /**
  * POST /party-mode/start
  * Start a party mode conversation with multiple agents
+ *
+ * @requires Valid session token (AC-1.3.2.1)
+ * @see AC-1.3.2.4 - Uses verified userId from session
  */
-partyModeRouter.post('/start', async (req: Request, res: Response) => {
+partyModeRouter.post('/start', requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as PartyModeRequestBody;
-    const userId = req.headers['x-user-id'] as string || 'anonymous';
+    const userId = (req as AuthenticatedRequest).userId;
 
     if (!body.agentIds || body.agentIds.length < 2) {
       res.status(400).json({
@@ -128,11 +135,14 @@ partyModeRouter.post('/start', async (req: Request, res: Response) => {
 /**
  * POST /party-mode/continue
  * Continue an existing party mode conversation
+ *
+ * @requires Valid session token (AC-1.3.2.1)
+ * @see AC-1.3.2.4 - Uses verified userId from session
  */
-partyModeRouter.post('/continue', async (req: Request, res: Response) => {
+partyModeRouter.post('/continue', requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as PartyModeRequestBody & { userMessage?: string };
-    const userId = req.headers['x-user-id'] as string || 'anonymous';
+    const userId = (req as AuthenticatedRequest).userId;
 
     if (!body.agentIds || body.agentIds.length < 2) {
       res.status(400).json({

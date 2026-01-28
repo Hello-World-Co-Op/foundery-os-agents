@@ -55,6 +55,10 @@ Required environment variables:
 - `ANTHROPIC_API_KEY` - Your Anthropic API key
 - `PORT` - Server port (default: 3001)
 
+Authentication environment variables (required for protected endpoints):
+- `AUTH_SERVICE_CANISTER_ID` - Auth service canister ID on IC
+- `IC_HOST` - IC host URL (default: `https://ic0.app`, use `http://localhost:4943` for local dev)
+
 ### Development
 
 ```bash
@@ -70,6 +74,28 @@ npm run start:prod
 
 ## API Reference
 
+### Authentication
+
+Protected endpoints require a valid session token from the auth-service canister.
+
+**Authorization Header Format:**
+```
+Authorization: Bearer <session_token>
+```
+
+**Error Responses:**
+
+| Status | Code | Description |
+|--------|------|-------------|
+| 401 | `MISSING_TOKEN` | No Authorization header provided |
+| 401 | `INVALID_TOKEN` | Token is invalid or expired |
+| 503 | `AUTH_SERVICE_ERROR` | Unable to validate with auth-service |
+| 503 | `AUTH_NOT_CONFIGURED` | AUTH_SERVICE_CANISTER_ID not set (production only) |
+
+All 401 responses include `WWW-Authenticate: Bearer realm="foundery-os-agents"` header.
+
+### Public Endpoints (No Auth Required)
+
 ### Health Check
 
 ```
@@ -77,20 +103,6 @@ GET /health
 ```
 
 Returns service status.
-
-### Invoke Agent
-
-```
-POST /api/agents/invoke
-Content-Type: application/json
-
-{
-  "agentId": "winston",
-  "message": "Help me plan our Q1 strategy",
-  "context": { "company": "Acme Corp" },
-  "conversationHistory": []
-}
-```
 
 ### List Agents
 
@@ -108,10 +120,28 @@ GET /api/agents/:agentId
 
 Returns agent persona details.
 
+### Protected Endpoints (Auth Required)
+
+### Invoke Agent
+
+```
+POST /api/agents/invoke
+Authorization: Bearer <session_token>
+Content-Type: application/json
+
+{
+  "agentId": "winston",
+  "message": "Help me plan our Q1 strategy",
+  "context": { "company": "Acme Corp" },
+  "conversationHistory": []
+}
+```
+
 ### Chat (Single Response)
 
 ```
 POST /api/chat
+Authorization: Bearer <session_token>
 Content-Type: application/json
 
 {
@@ -125,6 +155,7 @@ Content-Type: application/json
 
 ```
 POST /api/chat/stream
+Authorization: Bearer <session_token>
 Content-Type: application/json
 
 {
@@ -140,6 +171,7 @@ Returns Server-Sent Events stream.
 
 ```
 POST /api/party-mode/start
+Authorization: Bearer <session_token>
 Content-Type: application/json
 
 {
@@ -183,10 +215,16 @@ src/
 ├── index.ts              # Express server entry point
 ├── config/
 │   └── index.ts          # Configuration management
+├── middleware/
+│   └── session-auth.ts   # Session authentication middleware
+├── ic/
+│   ├── auth-client.ts    # IC agent client for auth-service
+│   └── declarations/     # Generated TypeScript from .did files
 ├── routes/
 │   ├── invoke.ts         # Agent invocation endpoints
 │   ├── chat.ts           # Chat endpoints
-│   └── party-mode.ts     # Multi-agent endpoints
+│   ├── party-mode.ts     # Multi-agent endpoints
+│   └── route-config.ts   # Auth requirements configuration
 ├── services/
 │   └── agent-service.ts  # Claude API integration
 └── agents/
@@ -199,7 +237,7 @@ src/
 This service integrates with:
 - **foundery-os-core** - Data storage canister
 - **foundery-os-suite** - User-facing UI
-- **auth-service** - Session validation (optional)
+- **auth-service** - Session validation (required for protected endpoints)
 
 ## License
 

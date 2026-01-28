@@ -1,5 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { agentService, type AgentInvocation } from '../services/agent-service.js';
+import {
+  requireSession,
+  type AuthenticatedRequest,
+} from '../middleware/session-auth.js';
 
 export const chatRouter = Router();
 
@@ -20,11 +24,14 @@ interface ChatRequestBody {
 /**
  * POST /chat
  * Send a chat message to an agent
+ *
+ * @requires Valid session token (AC-1.3.2.1)
+ * @see AC-1.3.2.4 - Uses verified userId from session
  */
-chatRouter.post('/', async (req: Request, res: Response) => {
+chatRouter.post('/', requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as ChatRequestBody;
-    const userId = req.headers['x-user-id'] as string || 'anonymous';
+    const userId = (req as AuthenticatedRequest).userId;
 
     if (!body.agentId || !body.message) {
       res.status(400).json({
@@ -68,11 +75,14 @@ chatRouter.post('/', async (req: Request, res: Response) => {
 /**
  * POST /chat/stream
  * Stream a chat response from an agent (Server-Sent Events)
+ *
+ * @requires Valid session token (AC-1.3.2.1)
+ * @see AC-1.3.2.4 - Uses verified userId from session
  */
-chatRouter.post('/stream', async (req: Request, res: Response) => {
+chatRouter.post('/stream', requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as ChatRequestBody;
-    const userId = req.headers['x-user-id'] as string || 'anonymous';
+    const userId = (req as AuthenticatedRequest).userId;
 
     if (!body.agentId || !body.message) {
       res.status(400).json({
