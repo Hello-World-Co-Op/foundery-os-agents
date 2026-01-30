@@ -5,6 +5,7 @@ import { config, validateConfig } from './config/index.js';
 import { invokeRouter } from './routes/invoke.js';
 import { chatRouter } from './routes/chat.js';
 import { partyModeRouter } from './routes/party-mode.js';
+import { proposalExtractRouter } from './routes/proposal-extract.js';
 
 // Validate configuration
 validateConfig();
@@ -27,6 +28,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/agents', invokeRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/party-mode', partyModeRouter);
+app.use('/api/proposal-extract', proposalExtractRouter);
 
 // Error handling
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

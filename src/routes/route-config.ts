@@ -43,6 +43,9 @@ export const PROTECTED_ENDPOINTS = {
   CHAT_STREAM: 'POST /api/chat/stream',
   PARTY_MODE_START: 'POST /api/party-mode/start',
   PARTY_MODE_CONTINUE: 'POST /api/party-mode/continue',
+  PROPOSAL_EXTRACT: 'POST /api/proposal-extract',
+  PROPOSAL_EXTRACT_STREAM: 'POST /api/proposal-extract/stream',
+  PROPOSAL_EXTRACT_CACHE_DELETE: 'DELETE /api/proposal-extract/cache/:discussionId',
 } as const;
 
 /**
@@ -54,6 +57,9 @@ export const PROTECTED_ROUTE_PATTERNS = [
   '/api/chat/stream',
   '/api/party-mode/start',
   '/api/party-mode/continue',
+  '/api/proposal-extract',
+  '/api/proposal-extract/stream',
+  '/api/proposal-extract/cache',
 ] as const;
 
 /**
