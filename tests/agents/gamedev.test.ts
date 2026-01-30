@@ -221,6 +221,7 @@ describe('Game Development Agents', () => {
       expect(definition!.capabilities).toContain('tdd');
       expect(definition!.capabilities).toContain('unity');
       expect(definition!.capabilities).toContain('unreal');
+      expect(definition!.capabilities).toContain('godot');
     });
 
     it('should have Diego with sprint-planning and velocity-tracking capabilities (AC-3.4.4.4)', () => {
