@@ -102,6 +102,11 @@ describe('Creative Intelligence Suite Agents', () => {
       expect(persona).not.toBeNull();
       expect(persona!.id).toBe('fable');
     });
+
+    it('should return null for non-existent creative persona', async () => {
+      const persona = await loadPersona('non-existent-creative-agent', 'creative');
+      expect(persona).toBeNull();
+    });
   });
 
   describe('Persona Category', () => {
@@ -202,6 +207,45 @@ describe('Creative Intelligence Suite Agents', () => {
       expect(persona).not.toBeNull();
       expect(persona!.name).toBe('Fable');
       expect(persona!.role).toContain('Storyteller');
+    });
+  });
+
+  describe('Registry Capability Tests', () => {
+    it('should have Spark with scamper capability (AC-3.4.3.1)', () => {
+      const definition = getAgentDefinition('spark');
+      expect(definition).toBeDefined();
+      expect(definition!.capabilities).toContain('scamper');
+      expect(definition!.capabilities).toContain('mind-mapping');
+      expect(definition!.capabilities).toContain('brainstorming');
+    });
+
+    it('should have Nova with root-cause-analysis capability (AC-3.4.3.2)', () => {
+      const definition = getAgentDefinition('nova');
+      expect(definition).toBeDefined();
+      expect(definition!.capabilities).toContain('root-cause-analysis');
+      expect(definition!.capabilities).toContain('first-principles');
+    });
+
+    it('should have Iris with design-thinking capability (AC-3.4.3.3)', () => {
+      const definition = getAgentDefinition('iris');
+      expect(definition).toBeDefined();
+      expect(definition!.capabilities).toContain('design-thinking');
+      expect(definition!.capabilities).toContain('prototyping');
+      expect(definition!.capabilities).toContain('user-testing');
+    });
+
+    it('should have Atlas with innovation-strategy capability (AC-3.4.3.4)', () => {
+      const definition = getAgentDefinition('atlas');
+      expect(definition).toBeDefined();
+      expect(definition!.capabilities).toContain('innovation-strategy');
+      expect(definition!.capabilities).toContain('business-model');
+    });
+
+    it('should have Fable with storytelling capability (AC-3.4.3.5)', () => {
+      const definition = getAgentDefinition('fable');
+      expect(definition).toBeDefined();
+      expect(definition!.capabilities).toContain('storytelling');
+      expect(definition!.capabilities).toContain('narrative-design');
     });
   });
 });
