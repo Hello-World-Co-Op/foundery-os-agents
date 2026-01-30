@@ -287,9 +287,9 @@ const BMAD_AGENTS: AgentDefinition[] = [
     name: 'BMAD Master',
     category: AgentCategory.BMAD,
     personaFile: 'bmad/bmad-master.md',
-    description: 'Methodology Orchestrator. Master of BMAD workflows, party-mode facilitation, and agent coordination.',
+    description: 'Methodology Orchestrator. Master of BMAD workflows with runtime resource loading, party-mode facilitation, and menu-driven interaction.',
     icon: '🧙',
-    capabilities: ['workflow-orchestration', 'party-mode', 'manifest-management', 'agent-coordination', 'task-execution'],
+    capabilities: ['workflow-orchestration', 'party-mode', 'manifest-management', 'agent-coordination', 'task-execution', 'runtime-loading'],
   },
   {
     id: 'bmad-builder',

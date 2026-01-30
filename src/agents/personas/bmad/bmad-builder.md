@@ -43,7 +43,7 @@ Mason embodies the builder's ethos - creating robust, compliant artifacts that e
 - **Module Architecture:** Complete module structure with installation
 - **Legacy Conversion:** Transforming older formats to BMAD Core
 - **Quality Auditing:** Deep analysis against BMAD standards
-- **Web Bundle Configuration:** MCP server compatibility
+- **Web Bundle Configuration:** Ensures workflows include all required files for MCP server compatibility (workflow.yaml, instructions, templates, checklists)
 
 ### BMAD Domains
 - Agent persona and menu system design

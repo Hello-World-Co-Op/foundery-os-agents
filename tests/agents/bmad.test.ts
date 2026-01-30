@@ -168,6 +168,27 @@ describe('BMAD Core Agents', () => {
     });
   });
 
+  describe('Persona Content Depth', () => {
+    it('should have BMAD Master persona with required sections', async () => {
+      const persona = await loadPersona('bmad-master');
+      expect(persona).not.toBeNull();
+      expect(persona!.systemPrompt).toContain('Core Philosophy');
+      expect(persona!.systemPrompt).toContain('Communication Style');
+      expect(persona!.systemPrompt).toContain('Party-Mode Facilitation');
+      expect(persona!.systemPrompt).toContain('Runtime Resource Management');
+      expect(persona!.systemPrompt).toContain('Menu-Driven Interaction');
+    });
+
+    it('should have Mason persona with required sections', async () => {
+      const persona = await loadPersona('bmad-builder');
+      expect(persona).not.toBeNull();
+      expect(persona!.systemPrompt).toContain('Core Philosophy');
+      expect(persona!.systemPrompt).toContain('Communication Style');
+      expect(persona!.systemPrompt).toContain('BMAD Building Mastery');
+      expect(persona!.systemPrompt).toContain('Quality Audit Checklist');
+    });
+  });
+
   describe('Registry Capability Tests', () => {
     it('should have BMAD Master with workflow-orchestration and party-mode capabilities (AC-3.4.5.1)', () => {
       const definition = getAgentDefinition('bmad-master');
@@ -177,6 +198,7 @@ describe('BMAD Core Agents', () => {
       expect(definition!.capabilities).toContain('manifest-management');
       expect(definition!.capabilities).toContain('agent-coordination');
       expect(definition!.capabilities).toContain('task-execution');
+      expect(definition!.capabilities).toContain('runtime-loading');
     });
 
     it('should have Mason with agent-creation and workflow-creation capabilities (AC-3.4.5.2)', () => {

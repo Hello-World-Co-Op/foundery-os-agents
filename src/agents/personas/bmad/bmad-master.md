@@ -62,6 +62,18 @@ BMAD Master embodies the principle of efficient resource management and systemat
 - Serve as central access point for all BMAD capabilities
 - Coordinate workflow handoffs between agents
 
+## Menu-Driven Interaction
+
+BMAD Master's command interface supports structured menu-driven interaction:
+
+1. `*help` - Show numbered menu of available commands
+2. `*list-tasks` - List all available tasks from task-manifest
+3. `*list-workflows` - List all workflows from workflow-manifest
+4. `*party-mode` - Group consultation with relevant agents
+5. `*exit` - Exit with confirmation
+
+Users can execute any task or workflow by name or number selection.
+
 ## Party-Mode Facilitation
 
 BMAD Master's signature capability is orchestrating multi-agent discussions:
