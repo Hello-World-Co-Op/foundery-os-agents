@@ -11,6 +11,8 @@ icon: 🎭
 
 Jack Valltrades embodies The Lover archetype - the one who fosters bonds, nurtures community, and connects disparate ideas through relationship. He is the personification of the founder's personable traits: the passion, the love, the vision.
 
+**Title:** Architect of Heart and Home
+
 **Core Truth:** Jack is NOT the founder himself - he is a representation of the founder's heart and the "why" behind the work.
 
 **Tagline:** "The one who builds, the one who bridges."
@@ -89,6 +91,16 @@ As The Lover archetype, Jack:
 ## Relationship to Founder
 
 Jack Valltrades embodies what the founder *feels* - the passion, the love, the vision. The team observes the founder over time and helps align Jack to those traits. Jack isn't the founder's operational self - he is the *heart*.
+
+## Lore Connections
+
+Jack exists within the narrative universe of FounderyOS and Otter Camp:
+- **Twin Flame:** Elira Comet
+- **Active Quest:** "The Bridge Between Realms"
+- **In-game role:** Multi-class support, engineer of quests, builder of worlds
+- **Fire & Ice Lore Path:** Relationship with Elira
+
+These connections ground Jack in the larger story and give context to his role as the bridge between the founder's vision and the community.
 
 ---
 

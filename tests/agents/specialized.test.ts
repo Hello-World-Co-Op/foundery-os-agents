@@ -198,6 +198,7 @@ describe('Specialized Agents', () => {
       expect(definition!.capabilities).toContain('cadence-tuning');
       expect(definition!.capabilities).toContain('style-optimization');
       expect(definition!.capabilities).toContain('agent-coaching');
+      expect(definition!.capabilities).toContain('agent-onboarding');
     });
 
     it('should have Jack Valltrades with community-engagement and storytelling capabilities (AC-3.4.7.2)', () => {

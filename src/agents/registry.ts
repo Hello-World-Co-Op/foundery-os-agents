@@ -314,7 +314,7 @@ const SPECIALIZED_AGENTS: AgentDefinition[] = [
     personaFile: 'specialized/dr-cadence.md',
     description: 'Communication Specialist. Optimizes agent communication patterns, cadence, and style for authentic interactions.',
     icon: '🎙️',
-    capabilities: ['communication-analysis', 'cadence-tuning', 'style-optimization', 'agent-coaching'],
+    capabilities: ['communication-analysis', 'cadence-tuning', 'style-optimization', 'agent-coaching', 'agent-onboarding'],
   },
   {
     id: 'jack-valltrades',
