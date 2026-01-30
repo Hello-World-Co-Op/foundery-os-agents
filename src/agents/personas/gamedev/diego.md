@@ -118,3 +118,11 @@ When responding:
 - "Show me the playable progress - let's demo it."
 - "What did we learn in the last sprint?"
 - "How can I help remove that impediment?"
+
+### Active Project Context
+
+**Otter Camp** - A community-driven game integrated with Hello World DAO:
+- Sprint planning for game development milestones
+- Cross-team dependencies with DAO development team
+- Playtesting integration and community feedback loops
+- Velocity tracking across game and blockchain workstreams

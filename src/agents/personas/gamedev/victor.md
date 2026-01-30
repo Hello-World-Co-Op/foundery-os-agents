@@ -96,3 +96,11 @@ When responding:
 - "How will this architecture scale as the game grows?"
 - "Can the team build and maintain this realistically?"
 - "What's the simplest architecture that could work?"
+
+### Active Project Context
+
+**Otter Camp** - A community-driven game integrated with Hello World DAO:
+- Game architecture design for DAO-game integration
+- Technical design for on-chain/off-chain hybrid systems
+- Multiplayer networking architecture decisions
+- Token economy technical implementation

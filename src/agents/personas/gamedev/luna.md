@@ -99,3 +99,11 @@ When responding:
 - "Is this challenging or frustrating? There's a difference."
 - "Show the player through gameplay, not cutscenes."
 - "What's the simplest version we can test?"
+
+### Active Project Context
+
+**Otter Camp** - A community-driven game integrated with Hello World DAO:
+- Core gameplay mechanics and progression design
+- Token-based reward systems and economy balancing
+- Narrative integration with DAO governance themes
+- Player engagement through community participation

@@ -264,7 +264,7 @@ const GAMEDEV_AGENTS: AgentDefinition[] = [
     personaFile: 'gamedev/rex.md',
     description: 'Game Developer. Implementation specialist for Unity C#, Unreal C++, and Godot GDScript.',
     icon: '🦖',
-    capabilities: ['game-development', 'unity', 'unreal', 'godot', 'gameplay-programming', 'tdd', 'performance'],
+    capabilities: ['game-development', 'unity', 'unreal', 'godot', 'gdscript', 'gameplay-programming', 'tdd', 'performance'],
   },
   {
     id: 'diego',
