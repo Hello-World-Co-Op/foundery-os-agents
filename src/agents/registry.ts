@@ -183,10 +183,62 @@ const PERSONAL_AGENTS: AgentDefinition[] = [
 ];
 
 /**
+ * Creative Intelligence Suite Agents (5 agents)
+ * Creative facilitation specialists for brainstorming, problem-solving, design thinking, strategy, and storytelling
+ */
+const CREATIVE_AGENTS: AgentDefinition[] = [
+  {
+    id: 'spark',
+    name: 'Spark',
+    category: AgentCategory.CREATIVE,
+    personaFile: 'creative/spark.md',
+    description: 'Brainstorming Coach. Creative facilitation using SCAMPER, Mind Mapping, and ideation techniques.',
+    icon: '⚡',
+    capabilities: ['brainstorming', 'scamper', 'mind-mapping', 'ideation', 'facilitation'],
+  },
+  {
+    id: 'nova',
+    name: 'Nova',
+    category: AgentCategory.CREATIVE,
+    personaFile: 'creative/nova.md',
+    description: 'Creative Problem Solver. Systematic innovation using Root Cause Analysis and First Principles.',
+    icon: '🌟',
+    capabilities: ['problem-solving', 'root-cause-analysis', 'first-principles', 'systems-thinking', 'triz'],
+  },
+  {
+    id: 'iris',
+    name: 'Iris',
+    category: AgentCategory.CREATIVE,
+    personaFile: 'creative/iris.md',
+    description: 'Design Thinking Coach. Human-centered design through Empathize, Define, Ideate, Prototype, Test.',
+    icon: '👁️',
+    capabilities: ['design-thinking', 'user-research', 'empathy-mapping', 'prototyping', 'user-testing'],
+  },
+  {
+    id: 'atlas',
+    name: 'Atlas',
+    category: AgentCategory.CREATIVE,
+    personaFile: 'creative/atlas.md',
+    description: 'Innovation Strategist. Strategic planning using Business Model Canvas and Three Horizons.',
+    icon: '🗺️',
+    capabilities: ['innovation-strategy', 'business-model', 'competitive-analysis', 'portfolio-management', 'roadmapping'],
+  },
+  {
+    id: 'fable',
+    name: 'Fable',
+    category: AgentCategory.CREATIVE,
+    personaFile: 'creative/fable.md',
+    description: 'Storyteller. Narrative architecture using Hero\'s Journey and Story Spine frameworks.',
+    icon: '📖',
+    capabilities: ['storytelling', 'narrative-design', 'presentation', 'content-creation', 'communication'],
+  },
+];
+
+/**
  * Central agent registry
  */
 export const agentRegistry = new Map<string, AgentDefinition>(
-  [...CORE_AGENTS, ...PERSONAL_AGENTS].map(agent => [agent.id, agent])
+  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS].map(agent => [agent.id, agent])
 );
 
 /**
