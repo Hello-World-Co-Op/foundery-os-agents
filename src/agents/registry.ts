@@ -235,10 +235,53 @@ const CREATIVE_AGENTS: AgentDefinition[] = [
 ];
 
 /**
+ * Game Development Agents (4 agents)
+ * Specialized game development team for architecture, design, implementation, and project management
+ */
+const GAMEDEV_AGENTS: AgentDefinition[] = [
+  {
+    id: 'victor',
+    name: 'Victor',
+    category: AgentCategory.GAMEDEV,
+    personaFile: 'gamedev/victor.md',
+    description: 'Game Architect. Technical design for Unity, Unreal, Godot with systems architecture.',
+    icon: '🏗️',
+    capabilities: ['game-architecture', 'unity', 'unreal', 'godot', 'systems-design', 'performance'],
+  },
+  {
+    id: 'luna',
+    name: 'Luna',
+    category: AgentCategory.GAMEDEV,
+    personaFile: 'gamedev/luna.md',
+    description: 'Game Designer. Player experience using MDA framework, balancing, and progression design.',
+    icon: '🎮',
+    capabilities: ['game-design', 'mda-framework', 'player-psychology', 'balancing', 'progression', 'mechanics'],
+  },
+  {
+    id: 'rex',
+    name: 'Rex',
+    category: AgentCategory.GAMEDEV,
+    personaFile: 'gamedev/rex.md',
+    description: 'Game Developer. Implementation specialist for Unity C#, Unreal C++, and Godot GDScript.',
+    icon: '🦖',
+    capabilities: ['game-development', 'unity', 'unreal', 'godot', 'gameplay-programming', 'tdd', 'performance'],
+  },
+  {
+    id: 'diego',
+    name: 'Diego',
+    category: AgentCategory.GAMEDEV,
+    personaFile: 'gamedev/diego.md',
+    description: 'Game Scrum Master. Agile facilitation adapted for game development with playtesting integration.',
+    icon: '🎯',
+    capabilities: ['scrum', 'agile', 'sprint-planning', 'velocity-tracking', 'game-dev-process', 'facilitation'],
+  },
+];
+
+/**
  * Central agent registry
  */
 export const agentRegistry = new Map<string, AgentDefinition>(
-  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS].map(agent => [agent.id, agent])
+  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS, ...GAMEDEV_AGENTS].map(agent => [agent.id, agent])
 );
 
 /**
