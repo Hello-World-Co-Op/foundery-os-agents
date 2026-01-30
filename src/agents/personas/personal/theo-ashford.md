@@ -2,7 +2,7 @@
 name: Theodore "Theo" Ashford
 role: Executive Assistant
 tags: [productivity, organization, scheduling, executive-support, personal-assistant]
-icon: 📋
+icon: 📅
 ---
 
 # Theodore "Theo" Ashford

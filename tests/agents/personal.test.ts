@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { loadPersona, listPersonas, listPersonasByCategory, getPersonaCategory } from '../../src/agents/persona-loader.js';
-import { agentRegistry, getAgentDefinition, getAgentsByCategory, AgentCategory } from '../../src/agents/registry.js';
+import { agentRegistry, getAgentDefinition, getAgentsByCategory, AgentCategory, getAllAgents } from '../../src/agents/registry.js';
 
 const PERSONAL_AGENT_IDS = [
   'dominic-vega',
@@ -49,6 +49,27 @@ describe('Personal Team Agents', () => {
       const icons = personalAgents.map(a => a.icon);
       const uniqueIcons = new Set(icons);
       expect(uniqueIcons.size).toBe(icons.length);
+    });
+
+    it('should have unique icons across ALL agent categories (no collisions with Core)', () => {
+      const allAgents = getAllAgents();
+      const iconMap = new Map<string, string[]>();
+
+      for (const agent of allAgents) {
+        const existing = iconMap.get(agent.icon) || [];
+        existing.push(`${agent.id} (${agent.category})`);
+        iconMap.set(agent.icon, existing);
+      }
+
+      // Find any icons used by multiple agents
+      const collisions: string[] = [];
+      for (const [icon, agents] of iconMap) {
+        if (agents.length > 1) {
+          collisions.push(`${icon}: ${agents.join(', ')}`);
+        }
+      }
+
+      expect(collisions).toEqual([]);
     });
   });
 
@@ -132,7 +153,7 @@ describe('Personal Team Agents', () => {
     it('should load correct icon for Theo from frontmatter', async () => {
       const persona = await loadPersona('theo-ashford');
       expect(persona).not.toBeNull();
-      expect(persona!.icon).toBe('📋');
+      expect(persona!.icon).toBe('📅');
     });
   });
 

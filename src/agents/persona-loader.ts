@@ -129,7 +129,9 @@ function parsePersonaMarkdown(id: string, content: string, category?: string): A
           role = value;
           break;
         case 'tags':
-          tags.push(...value.split(',').map(t => t.trim()));
+          // Handle YAML array format: [tag1, tag2] -> strip brackets
+          const cleanValue = value.replace(/^\[|\]$/g, '');
+          tags.push(...cleanValue.split(',').map(t => t.trim()));
           break;
         case 'icon':
           icon = value;

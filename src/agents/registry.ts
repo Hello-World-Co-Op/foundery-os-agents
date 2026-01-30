@@ -159,7 +159,7 @@ const PERSONAL_AGENTS: AgentDefinition[] = [
     category: AgentCategory.PERSONAL,
     personaFile: 'personal/theo-ashford.md',
     description: 'Executive Assistant. Founder operations and productivity optimization.',
-    icon: '📋',
+    icon: '📅',
     capabilities: ['scheduling', 'task-management', 'email-triage', 'meeting-prep', 'life-admin'],
   },
   {
