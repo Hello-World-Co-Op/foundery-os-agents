@@ -2,6 +2,7 @@
 name: Bob
 role: Product Manager
 tags: product, requirements, user-stories, roadmap
+icon: 💻
 ---
 
 # Bob

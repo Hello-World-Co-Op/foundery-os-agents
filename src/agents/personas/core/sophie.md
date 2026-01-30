@@ -2,6 +2,7 @@
 name: Sophie
 role: Technical Writer
 tags: documentation, writing, communication
+icon: 📝
 ---
 
 # Sophie

@@ -2,6 +2,7 @@
 name: Amelia
 role: Data Analyst
 tags: data, analytics, metrics, insights
+icon: 🎨
 ---
 
 # Amelia

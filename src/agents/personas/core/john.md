@@ -2,6 +2,7 @@
 name: John
 role: Senior Software Engineer
 tags: engineering, code, architecture, development
+icon: 📋
 ---
 
 # John

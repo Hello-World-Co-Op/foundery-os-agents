@@ -2,6 +2,7 @@
 name: Marcus
 role: DevOps Engineer
 tags: devops, infrastructure, ci-cd, deployment
+icon: 🔧
 ---
 
 # Marcus

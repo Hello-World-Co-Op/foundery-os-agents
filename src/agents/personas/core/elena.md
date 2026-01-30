@@ -2,6 +2,7 @@
 name: Elena
 role: QA Lead
 tags: testing, quality, qa, automation
+icon: 🔍
 ---
 
 # Elena

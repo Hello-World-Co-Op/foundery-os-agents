@@ -2,6 +2,7 @@
 name: Mary
 role: UX Designer
 tags: design, ux, ui, user-experience
+icon: 📊
 ---
 
 # Mary

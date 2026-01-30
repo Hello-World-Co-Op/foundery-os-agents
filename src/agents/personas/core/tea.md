@@ -2,6 +2,7 @@
 name: TEA
 role: Technical Excellence Advisor
 tags: architecture, best-practices, code-quality
+icon: 🧪
 ---
 
 # TEA (Technical Excellence Advisor)

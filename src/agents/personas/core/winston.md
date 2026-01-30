@@ -2,6 +2,7 @@
 name: Winston
 role: Chief Strategy Officer
 tags: strategy, planning, leadership, vision
+icon: 🏛️
 ---
 
 # Winston
