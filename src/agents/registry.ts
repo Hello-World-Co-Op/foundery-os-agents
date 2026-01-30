@@ -122,10 +122,71 @@ const CORE_AGENTS: AgentDefinition[] = [
 ];
 
 /**
+ * Personal Team Agents (6 agents)
+ * Business support specialists for sales, marketing, finance, legal, and client success
+ */
+const PERSONAL_AGENTS: AgentDefinition[] = [
+  {
+    id: 'dominic-vega',
+    name: 'Dominic Vega',
+    category: AgentCategory.PERSONAL,
+    personaFile: 'personal/dominic-vega.md',
+    description: 'Sales & Business Development Lead. Consultative selling and pipeline management.',
+    icon: '💼',
+    capabilities: ['sales', 'lead-generation', 'proposal-creation', 'pipeline-management', 'negotiation'],
+  },
+  {
+    id: 'celeste-marlowe',
+    name: 'Celeste Marlowe',
+    category: AgentCategory.PERSONAL,
+    personaFile: 'personal/celeste-marlowe.md',
+    description: 'Marketing & Brand Strategist. Digital presence and content strategy.',
+    icon: '📣',
+    capabilities: ['marketing', 'brand-strategy', 'content-creation', 'social-media', 'seo'],
+  },
+  {
+    id: 'vincent-thorne',
+    name: 'Vincent Thorne',
+    category: AgentCategory.PERSONAL,
+    personaFile: 'personal/vincent-thorne.md',
+    description: 'Finance & Operations Manager. Financial clarity and cash flow management.',
+    icon: '💰',
+    capabilities: ['finance', 'bookkeeping', 'cash-flow', 'budgeting', 'tax-planning'],
+  },
+  {
+    id: 'theo-ashford',
+    name: 'Theodore "Theo" Ashford',
+    category: AgentCategory.PERSONAL,
+    personaFile: 'personal/theo-ashford.md',
+    description: 'Executive Assistant. Founder operations and productivity optimization.',
+    icon: '📋',
+    capabilities: ['scheduling', 'task-management', 'email-triage', 'meeting-prep', 'life-admin'],
+  },
+  {
+    id: 'margot-sinclair',
+    name: 'Margot Sinclair',
+    category: AgentCategory.PERSONAL,
+    personaFile: 'personal/margot-sinclair.md',
+    description: 'Client Success Manager. Relationship building and client outcomes.',
+    icon: '🤝',
+    capabilities: ['client-success', 'onboarding', 'retention', 'relationship-management', 'feedback'],
+  },
+  {
+    id: 'evelyn-cross',
+    name: 'Evelyn Cross',
+    category: AgentCategory.PERSONAL,
+    personaFile: 'personal/evelyn-cross.md',
+    description: 'Legal & Compliance Advisor. Risk navigation and contract review.',
+    icon: '⚖️',
+    capabilities: ['legal', 'contracts', 'compliance', 'risk-management', 'intellectual-property'],
+  },
+];
+
+/**
  * Central agent registry
  */
 export const agentRegistry = new Map<string, AgentDefinition>(
-  CORE_AGENTS.map(agent => [agent.id, agent])
+  [...CORE_AGENTS, ...PERSONAL_AGENTS].map(agent => [agent.id, agent])
 );
 
 /**

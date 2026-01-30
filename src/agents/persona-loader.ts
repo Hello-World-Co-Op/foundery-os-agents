@@ -6,6 +6,11 @@ import { AgentCategory, AGENT_CATEGORIES } from './registry.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+/** Alias map for backward compatibility when persona IDs change */
+const PERSONA_ALIASES: Record<string, string> = {
+  'theo': 'theo-ashford',
+};
+
 export interface AgentPersona {
   id: string;
   name: string;
@@ -26,15 +31,17 @@ export type PersonaCategory = AgentCategory;
  * Searches subdirectories (core, personal, creative, etc.) for the persona
  */
 export async function loadPersona(agentId: string, category?: PersonaCategory): Promise<AgentPersona | null> {
+  // Resolve alias if one exists
+  const resolvedId = PERSONA_ALIASES[agentId] || agentId;
   const personasDir = join(__dirname, 'personas');
 
   // If category provided, try that first
   if (category) {
-    const categoryPath = join(personasDir, category, `${agentId}.md`);
+    const categoryPath = join(personasDir, category, `${resolvedId}.md`);
     if (existsSync(categoryPath)) {
       try {
         const content = await readFile(categoryPath, 'utf-8');
-        return parsePersonaMarkdown(agentId, content, category);
+        return parsePersonaMarkdown(resolvedId, content, category);
       } catch {
         // Fall through to search all categories
       }
@@ -43,11 +50,11 @@ export async function loadPersona(agentId: string, category?: PersonaCategory): 
 
   // Search all category subdirectories
   for (const cat of AGENT_CATEGORIES) {
-    const tryPath = join(personasDir, cat, `${agentId}.md`);
+    const tryPath = join(personasDir, cat, `${resolvedId}.md`);
     if (existsSync(tryPath)) {
       try {
         const content = await readFile(tryPath, 'utf-8');
-        return parsePersonaMarkdown(agentId, content, cat);
+        return parsePersonaMarkdown(resolvedId, content, cat);
       } catch {
         continue;
       }
@@ -55,17 +62,17 @@ export async function loadPersona(agentId: string, category?: PersonaCategory): 
   }
 
   // Fallback: try flat directory (backward compatibility)
-  const flatPath = join(personasDir, `${agentId}.md`);
+  const flatPath = join(personasDir, `${resolvedId}.md`);
   if (existsSync(flatPath)) {
     try {
       const content = await readFile(flatPath, 'utf-8');
-      return parsePersonaMarkdown(agentId, content);
+      return parsePersonaMarkdown(resolvedId, content);
     } catch {
       // Fall through
     }
   }
 
-  console.warn(`Persona not found: ${agentId}`);
+  console.warn(`Persona not found: ${agentId}${agentId !== resolvedId ? ` (resolved from ${agentId})` : ''}`);
   return null;
 }
 
@@ -73,10 +80,12 @@ export async function loadPersona(agentId: string, category?: PersonaCategory): 
  * Get the category for a persona based on its file location
  */
 export async function getPersonaCategory(agentId: string): Promise<PersonaCategory | null> {
+  // Resolve alias if one exists
+  const resolvedId = PERSONA_ALIASES[agentId] || agentId;
   const personasDir = join(__dirname, 'personas');
 
   for (const category of AGENT_CATEGORIES) {
-    const tryPath = join(personasDir, category, `${agentId}.md`);
+    const tryPath = join(personasDir, category, `${resolvedId}.md`);
     if (existsSync(tryPath)) {
       return category;
     }
