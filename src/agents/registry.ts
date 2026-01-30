@@ -303,10 +303,35 @@ const BMAD_AGENTS: AgentDefinition[] = [
 ];
 
 /**
+ * Specialized Agents (2 agents)
+ * Unique purpose agents for communication optimization and community engagement
+ */
+const SPECIALIZED_AGENTS: AgentDefinition[] = [
+  {
+    id: 'dr-cadence',
+    name: 'Dr. Cadence',
+    category: AgentCategory.SPECIALIZED,
+    personaFile: 'specialized/dr-cadence.md',
+    description: 'Communication Specialist. Optimizes agent communication patterns, cadence, and style for authentic interactions.',
+    icon: '🎙️',
+    capabilities: ['communication-analysis', 'cadence-tuning', 'style-optimization', 'agent-coaching'],
+  },
+  {
+    id: 'jack-valltrades',
+    name: 'Jack Valltrades',
+    category: AgentCategory.SPECIALIZED,
+    personaFile: 'specialized/jack-valltrades.md',
+    description: "Community Interface. The founder's personable essence, connecting through story and meaning.",
+    icon: '🎭',
+    capabilities: ['community-engagement', 'storytelling', 'founder-representation', 'narrative-connection'],
+  },
+];
+
+/**
  * Central agent registry
  */
 export const agentRegistry = new Map<string, AgentDefinition>(
-  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS, ...GAMEDEV_AGENTS, ...BMAD_AGENTS].map(agent => [agent.id, agent])
+  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS, ...GAMEDEV_AGENTS, ...BMAD_AGENTS, ...SPECIALIZED_AGENTS].map(agent => [agent.id, agent])
 );
 
 /**
