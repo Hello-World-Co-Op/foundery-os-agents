@@ -278,10 +278,35 @@ const GAMEDEV_AGENTS: AgentDefinition[] = [
 ];
 
 /**
+ * BMAD Core Agents (2 agents)
+ * Methodology experts for BMAD workflow orchestration and module building
+ */
+const BMAD_AGENTS: AgentDefinition[] = [
+  {
+    id: 'bmad-master',
+    name: 'BMAD Master',
+    category: AgentCategory.BMAD,
+    personaFile: 'bmad/bmad-master.md',
+    description: 'Methodology Orchestrator. Master of BMAD workflows, party-mode facilitation, and agent coordination.',
+    icon: '🧙',
+    capabilities: ['workflow-orchestration', 'party-mode', 'manifest-management', 'agent-coordination', 'task-execution'],
+  },
+  {
+    id: 'bmad-builder',
+    name: 'Mason',
+    category: AgentCategory.BMAD,
+    personaFile: 'bmad/bmad-builder.md',
+    description: 'Module Builder. Creates BMAD-compliant agents, workflows, and modules with quality auditing.',
+    icon: '🔨',
+    capabilities: ['agent-creation', 'workflow-creation', 'module-building', 'bmad-compliance', 'quality-audit'],
+  },
+];
+
+/**
  * Central agent registry
  */
 export const agentRegistry = new Map<string, AgentDefinition>(
-  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS, ...GAMEDEV_AGENTS].map(agent => [agent.id, agent])
+  [...CORE_AGENTS, ...PERSONAL_AGENTS, ...CREATIVE_AGENTS, ...GAMEDEV_AGENTS, ...BMAD_AGENTS].map(agent => [agent.id, agent])
 );
 
 /**
