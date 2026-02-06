@@ -63,8 +63,21 @@ export const config = {
   },
 };
 
+/**
+ * Validate configuration and warn about potential issues
+ * @see FOS-5.6.4 AC-5.6.4.1 - Warn if using default port in production (F-13)
+ */
 export function validateConfig(): void {
   if (!config.anthropic.apiKey) {
     console.warn('Warning: ANTHROPIC_API_KEY not set. Agent features will be disabled.');
+  }
+
+  // FOS-5.6.4: Warn if using default port in production
+  const DEFAULT_PORT = 3001;
+  if (config.server.nodeEnv === 'production' && config.server.port === DEFAULT_PORT && !process.env.PORT) {
+    console.warn(
+      `[SECURITY] Warning: Using default port ${DEFAULT_PORT} in production. ` +
+      'Set the PORT environment variable to a custom port for better security.'
+    );
   }
 }
