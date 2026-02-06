@@ -23,7 +23,7 @@ app.use(helmet({
     preload: true,
   },
   // Prevent MIME type sniffing
-  contentTypeOptions: true,
+  xContentTypeOptions: true,
   // Prevent clickjacking
   frameguard: { action: 'deny' },
   // XSS protection (legacy but still useful)
