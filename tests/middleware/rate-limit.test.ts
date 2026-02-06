@@ -4,6 +4,8 @@
  * @module tests/middleware/rate-limit.test
  * @see AC-5.6.2.1 - Rate limiting on chat/invoke endpoints
  * @see F-5 (security-audit-backend-auth.md) - Missing rate limits finding
+ * @see FOS-5.6.3 AC-5.6.3.4 - Atomic rate limiting with optional Redis backend
+ * @see F-11 (security-audit-backend-auth.md) - Race condition in rate limit Map
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -241,6 +243,36 @@ describe('rate-limit middleware', () => {
         .set('X-User-ID', 'user-2')
         .send({});
       expect(user2Response.status).toBe(200);
+    });
+  });
+
+  describe('Redis configuration (FOS-5.6.3 AC-5.6.3.4)', () => {
+    it('should export isRedisConfigured function', async () => {
+      const { isRedisConfigured } = await import('../../src/middleware/rate-limit.js');
+      expect(typeof isRedisConfigured).toBe('function');
+    });
+
+    it('should return false when REDIS_URL is not set', async () => {
+      const originalRedisUrl = process.env.REDIS_URL;
+      delete process.env.REDIS_URL;
+
+      // Need to re-import to get fresh evaluation
+      vi.resetModules();
+      const { isRedisConfigured } = await import('../../src/middleware/rate-limit.js');
+      expect(isRedisConfigured()).toBe(false);
+
+      process.env.REDIS_URL = originalRedisUrl;
+    });
+
+    it('should return true when REDIS_URL is set', async () => {
+      const originalRedisUrl = process.env.REDIS_URL;
+      process.env.REDIS_URL = 'redis://localhost:6379';
+
+      vi.resetModules();
+      const { isRedisConfigured } = await import('../../src/middleware/rate-limit.js');
+      expect(isRedisConfigured()).toBe(true);
+
+      process.env.REDIS_URL = originalRedisUrl;
     });
   });
 });

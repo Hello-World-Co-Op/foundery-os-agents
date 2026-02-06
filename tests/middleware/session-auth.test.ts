@@ -143,6 +143,84 @@ describe('session-auth middleware', () => {
       });
     });
 
+    describe('malformed token validation (FOS-5.6.3 AC-5.6.3.2 / F-9)', () => {
+      it('should return 400 when token exceeds 500 characters', async () => {
+        const longToken = 'a'.repeat(501);
+        mockReq.headers = { authorization: `Bearer ${longToken}` };
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect(statusMock).toHaveBeenCalledWith(400);
+        expect(jsonMock).toHaveBeenCalledWith({
+          error: 'Bad Request',
+          code: AuthErrorCode.MALFORMED_TOKEN,
+          message: 'Token exceeds maximum length of 500 characters',
+        });
+        expect(mockValidateAccessToken).not.toHaveBeenCalled();
+        expect(mockNext).not.toHaveBeenCalled();
+      });
+
+      it('should accept token at exactly 500 characters', async () => {
+        const maxToken = 'a'.repeat(500);
+        mockReq.headers = { authorization: `Bearer ${maxToken}` };
+        mockValidateAccessToken.mockResolvedValue('user-abc');
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect(mockValidateAccessToken).toHaveBeenCalledWith(maxToken);
+        expect(mockNext).toHaveBeenCalled();
+      });
+
+      it('should return 400 when token contains invalid characters (spaces)', async () => {
+        mockReq.headers = { authorization: 'Bearer token with spaces' };
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect(statusMock).toHaveBeenCalledWith(400);
+        expect(jsonMock).toHaveBeenCalledWith({
+          error: 'Bad Request',
+          code: AuthErrorCode.MALFORMED_TOKEN,
+          message: 'Token contains invalid characters',
+        });
+        expect(mockValidateAccessToken).not.toHaveBeenCalled();
+      });
+
+      it('should return 400 when token contains special characters', async () => {
+        mockReq.headers = { authorization: 'Bearer token<script>alert(1)</script>' };
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect(statusMock).toHaveBeenCalledWith(400);
+        expect(jsonMock).toHaveBeenCalledWith({
+          error: 'Bad Request',
+          code: AuthErrorCode.MALFORMED_TOKEN,
+          message: 'Token contains invalid characters',
+        });
+      });
+
+      it('should accept valid base64 tokens with padding', async () => {
+        const base64Token = 'YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXo=';
+        mockReq.headers = { authorization: `Bearer ${base64Token}` };
+        mockValidateAccessToken.mockResolvedValue('user-xyz');
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect(mockValidateAccessToken).toHaveBeenCalledWith(base64Token);
+        expect(mockNext).toHaveBeenCalled();
+      });
+
+      it('should accept valid URL-safe base64 tokens', async () => {
+        const urlSafeToken = 'abc_def-ghi+jkl/mno';
+        mockReq.headers = { authorization: `Bearer ${urlSafeToken}` };
+        mockValidateAccessToken.mockResolvedValue('user-123');
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect(mockValidateAccessToken).toHaveBeenCalledWith(urlSafeToken);
+        expect(mockNext).toHaveBeenCalled();
+      });
+    });
+
     describe('auth service errors', () => {
       it('should return 503 when auth service call throws AuthServiceError', async () => {
         mockReq.headers = { authorization: 'Bearer some-token' };

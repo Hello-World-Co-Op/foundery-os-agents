@@ -19,6 +19,7 @@ import {
   AuthServiceError,
   type SessionInfo,
 } from '../ic/auth-client.js';
+import { getRequestId, getLogContext } from './request-id.js';
 
 /**
  * Error codes for auth failures (AC-1.3.2.2)
@@ -26,6 +27,7 @@ import {
 export const AuthErrorCode = {
   MISSING_TOKEN: 'MISSING_TOKEN',
   INVALID_TOKEN: 'INVALID_TOKEN',
+  MALFORMED_TOKEN: 'MALFORMED_TOKEN',
   EXPIRED_TOKEN: 'EXPIRED_TOKEN',
   AUTH_SERVICE_ERROR: 'AUTH_SERVICE_ERROR',
   AUTH_NOT_CONFIGURED: 'AUTH_NOT_CONFIGURED',
@@ -37,10 +39,18 @@ export type AuthErrorCode = (typeof AuthErrorCode)[keyof typeof AuthErrorCode];
  * Error response format (AC-1.3.2.2)
  */
 export interface AuthErrorResponse {
-  error: 'Unauthorized' | 'Forbidden' | 'Service Unavailable';
+  error: 'Unauthorized' | 'Forbidden' | 'Service Unavailable' | 'Bad Request';
   code: AuthErrorCode;
   message: string;
 }
+
+/**
+ * Token validation constants (FOS-5.6.3 AC-5.6.3.2)
+ * @see F-9 (security-audit-backend-auth.md) - Insufficient bearer token validation
+ */
+const TOKEN_MAX_LENGTH = 500;
+// Valid token characters: alphanumeric + base64 padding/delimiters
+const TOKEN_VALID_CHARS = /^[a-zA-Z0-9+/=_-]+$/;
 
 /**
  * Extended Request type with authenticated user info (AC-1.3.2.4)
@@ -106,6 +116,14 @@ export async function requireSession(
     return;
   }
 
+  // FOS-5.6.3 (F-9): Validate token format before sending to auth service
+  // Return 400 Bad Request for malformed tokens (not 401)
+  const tokenValidation = validateTokenFormat(token);
+  if (!tokenValidation.valid) {
+    sendAuthError(res, 400, 'Bad Request', AuthErrorCode.MALFORMED_TOKEN, tokenValidation.message);
+    return;
+  }
+
   try {
     // Validate token with auth-service (Task 2.3)
     const userId = await validateAccessToken(token);
@@ -120,15 +138,18 @@ export async function requireSession(
     (req as AuthenticatedRequest).userId = userId;
 
     // Log timing for debugging (Task 2.6)
+    // FOS-5.6.3 (F-8): Use request ID instead of user ID in logs
     const duration = Date.now() - startTime;
     if (duration > 100) {
-      console.debug(`Auth validation took ${duration}ms for user ${userId.slice(0, 8)}...`);
+      console.debug(`[${getRequestId(req)}] Auth validation took ${duration}ms`);
     }
 
     next();
   } catch (error) {
     // Handle auth service errors
-    console.error('Session validation error:', error);
+    // FOS-5.6.3 (F-8): Use request ID instead of exposing error details with user context
+    const logCtx = getLogContext(req);
+    console.error(`[${logCtx.requestId}] Session validation error:`, error instanceof Error ? error.message : 'Unknown error');
 
     if (error instanceof AuthServiceError) {
       sendAuthError(res, 503, 'Service Unavailable', AuthErrorCode.AUTH_SERVICE_ERROR, 'Unable to validate session. Please try again.');
@@ -162,6 +183,37 @@ export async function optionalSession(
 
   // Token provided - validate it
   await requireSession(req, res, next);
+}
+
+/**
+ * Validate token format before sending to auth service (FOS-5.6.3 AC-5.6.3.2)
+ *
+ * Validates:
+ * - Length: must be ≤500 characters
+ * - Character set: alphanumeric + base64 chars only
+ *
+ * @param token - The bearer token to validate
+ * @returns Validation result with valid flag and optional error message
+ * @see F-9 (security-audit-backend-auth.md) - Insufficient bearer token validation
+ */
+function validateTokenFormat(token: string): { valid: boolean; message: string } {
+  // Check length (prevent DoS via extremely long tokens)
+  if (token.length > TOKEN_MAX_LENGTH) {
+    return {
+      valid: false,
+      message: `Token exceeds maximum length of ${TOKEN_MAX_LENGTH} characters`,
+    };
+  }
+
+  // Check character set (prevent injection attacks)
+  if (!TOKEN_VALID_CHARS.test(token)) {
+    return {
+      valid: false,
+      message: 'Token contains invalid characters',
+    };
+  }
+
+  return { valid: true, message: '' };
 }
 
 /**

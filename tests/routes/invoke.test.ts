@@ -38,6 +38,13 @@ vi.mock('../../src/ic/auth-client.js', () => ({
   },
 }));
 
+// Mock the agent registry to accept any agent ID in route tests
+// (agent ID validation is tested separately in agent-id.test.ts)
+vi.mock('../../src/agents/registry.js', () => ({
+  isAgentRegistered: () => true,
+  getAllAgentIds: () => ['bob', 'test', 'test-agent'],
+}));
+
 describe('invoke routes', () => {
   let app: express.Application;
 

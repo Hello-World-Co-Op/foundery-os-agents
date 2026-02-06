@@ -5,6 +5,8 @@ import {
   type AuthenticatedRequest,
 } from '../middleware/session-auth.js';
 import { chatRateLimit } from '../middleware/rate-limit.js';
+import { validateContextMiddleware } from '../validation/user-context.js';
+import { validateAgentId } from '../validation/agent-id.js';
 
 export const chatRouter = Router();
 
@@ -29,8 +31,10 @@ interface ChatRequestBody {
  * @requires Valid session token (AC-1.3.2.1)
  * @see AC-1.3.2.4 - Uses verified userId from session
  * @see AC-5.6.2.1 - Rate limited to 10 req/min per user
+ * @see AC-5.6.3.3 - User context validated before prompt injection (F-10)
+ * @see AC-5.6.3.5 - Agent IDs validated against registered agent list (F-12)
  */
-chatRouter.post('/', chatRateLimit, requireSession, async (req: Request, res: Response) => {
+chatRouter.post('/', chatRateLimit, requireSession, validateAgentId({ fromBody: true }), validateContextMiddleware(), async (req: Request, res: Response) => {
   try {
     const body = req.body as ChatRequestBody;
     const userId = (req as AuthenticatedRequest).userId;
@@ -81,8 +85,10 @@ chatRouter.post('/', chatRateLimit, requireSession, async (req: Request, res: Re
  * @requires Valid session token (AC-1.3.2.1)
  * @see AC-1.3.2.4 - Uses verified userId from session
  * @see AC-5.6.2.1 - Rate limited to 10 req/min per user
+ * @see AC-5.6.3.3 - User context validated before prompt injection (F-10)
+ * @see AC-5.6.3.5 - Agent IDs validated against registered agent list (F-12)
  */
-chatRouter.post('/stream', chatRateLimit, requireSession, async (req: Request, res: Response) => {
+chatRouter.post('/stream', chatRateLimit, requireSession, validateAgentId({ fromBody: true }), validateContextMiddleware(), async (req: Request, res: Response) => {
   try {
     const body = req.body as ChatRequestBody;
     const userId = (req as AuthenticatedRequest).userId;

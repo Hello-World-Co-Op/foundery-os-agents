@@ -7,11 +7,16 @@ import { invokeRouter } from './routes/invoke.js';
 import { chatRouter } from './routes/chat.js';
 import { partyModeRouter } from './routes/party-mode.js';
 import { proposalExtractRouter } from './routes/proposal-extract.js';
+import { requestId } from './middleware/request-id.js';
 
 // Validate configuration
 validateConfig();
 
 const app = express();
+
+// Request ID middleware (FOS-5.6.3 AC-5.6.3.1)
+// @see F-8 (security-audit-backend-auth.md) - Use opaque request IDs instead of user IDs
+app.use(requestId);
 
 // Security headers middleware (FOS-5.6.2 AC-5.6.2.3)
 // @see F-7 (security-audit-backend-auth.md) - No HTTPS/TLS enforcement
