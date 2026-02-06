@@ -4,6 +4,7 @@ import {
   requireSession,
   type AuthenticatedRequest,
 } from '../middleware/session-auth.js';
+import { invokeRateLimit } from '../middleware/rate-limit.js';
 
 export const invokeRouter = Router();
 
@@ -20,8 +21,9 @@ interface InvokeRequestBody {
  *
  * @requires Valid session token (AC-1.3.2.1)
  * @see AC-1.3.2.4 - Uses verified userId from session
+ * @see AC-5.6.2.1 - Rate limited to 20 req/min per user
  */
-invokeRouter.post('/invoke', requireSession, async (req: Request, res: Response) => {
+invokeRouter.post('/invoke', invokeRateLimit, requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as InvokeRequestBody;
     const userId = (req as AuthenticatedRequest).userId;

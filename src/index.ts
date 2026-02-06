@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import { config, validateConfig } from './config/index.js';
 import { invokeRouter } from './routes/invoke.js';
@@ -12,12 +13,33 @@ validateConfig();
 
 const app = express();
 
-// Middleware
+// Security headers middleware (FOS-5.6.2 AC-5.6.2.3)
+// @see F-7 (security-audit-backend-auth.md) - No HTTPS/TLS enforcement
+app.use(helmet({
+  // HSTS: Enforce HTTPS for 1 year, include subdomains, enable preload
+  hsts: {
+    maxAge: 31536000, // 1 year in seconds
+    includeSubDomains: true,
+    preload: true,
+  },
+  // Prevent MIME type sniffing
+  contentTypeOptions: true,
+  // Prevent clickjacking
+  frameguard: { action: 'deny' },
+  // XSS protection (legacy but still useful)
+  xssFilter: true,
+  // Disable X-Powered-By header
+  hidePoweredBy: true,
+}));
+
+// CORS middleware
 app.use(cors({
   origin: config.cors.origins,
   credentials: true,
 }));
-app.use(bodyParser.json());
+
+// Body parser with size limit (FOS-5.6.4 AC-5.6.4.3 - prevent DoS via large payloads)
+app.use(bodyParser.json({ limit: '10mb' }));
 
 // Health check
 app.get('/health', (_req, res) => {

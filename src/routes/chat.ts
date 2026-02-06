@@ -4,6 +4,7 @@ import {
   requireSession,
   type AuthenticatedRequest,
 } from '../middleware/session-auth.js';
+import { chatRateLimit } from '../middleware/rate-limit.js';
 
 export const chatRouter = Router();
 
@@ -27,8 +28,9 @@ interface ChatRequestBody {
  *
  * @requires Valid session token (AC-1.3.2.1)
  * @see AC-1.3.2.4 - Uses verified userId from session
+ * @see AC-5.6.2.1 - Rate limited to 10 req/min per user
  */
-chatRouter.post('/', requireSession, async (req: Request, res: Response) => {
+chatRouter.post('/', chatRateLimit, requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as ChatRequestBody;
     const userId = (req as AuthenticatedRequest).userId;
@@ -78,8 +80,9 @@ chatRouter.post('/', requireSession, async (req: Request, res: Response) => {
  *
  * @requires Valid session token (AC-1.3.2.1)
  * @see AC-1.3.2.4 - Uses verified userId from session
+ * @see AC-5.6.2.1 - Rate limited to 10 req/min per user
  */
-chatRouter.post('/stream', requireSession, async (req: Request, res: Response) => {
+chatRouter.post('/stream', chatRateLimit, requireSession, async (req: Request, res: Response) => {
   try {
     const body = req.body as ChatRequestBody;
     const userId = (req as AuthenticatedRequest).userId;
