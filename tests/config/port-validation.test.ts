@@ -32,7 +32,9 @@ describe('Port configuration validation', () => {
       process.env.NODE_ENV = 'production';
       process.env.CORS_ORIGINS = 'https://example.com'; // Required in production
 
-      // Clear module cache
+      // Clear module cache using query string cache-busting technique
+      // This forces a fresh module import with the updated environment variables
+      // Required because ESM modules are cached by URL, not by resolved path
       const configPath = new URL('../../src/config/index.js', import.meta.url).href;
       const uniqueConfigPath = `${configPath}?port-warning-test-${Date.now()}`;
       const { validateConfig, config } = await import(uniqueConfigPath);
