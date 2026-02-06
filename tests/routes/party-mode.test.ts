@@ -6,6 +6,7 @@
  * @see AC-1.3.2.2 - Return 401 for invalid tokens
  * @see AC-1.3.2.4 - Use verified userId from session
  * @see AC-1.3.2.6 - Comprehensive test coverage
+ * @see FOS-3.4.8 - Party Mode Orchestration enhancements
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -32,6 +33,47 @@ vi.mock('../../src/ic/auth-client.js', () => ({
   AuthServiceError: class AuthServiceError extends Error {
     name = 'AuthServiceError';
   },
+}));
+
+// Mock the registry functions
+vi.mock('../../src/agents/registry.js', () => ({
+  AgentCategory: {
+    CORE: 'core',
+    PERSONAL: 'personal',
+    CREATIVE: 'creative',
+    GAMEDEV: 'gamedev',
+    BMAD: 'bmad',
+    SPECIALIZED: 'specialized',
+  },
+  getAgentDefinition: (agentId: string) => {
+    if (agentId === 'agent-1' || agentId === 'agent-2') {
+      return {
+        id: agentId,
+        name: agentId === 'agent-1' ? 'Agent One' : 'Agent Two',
+        category: 'core',
+        personaFile: `core/${agentId}.md`,
+        description: `Test agent ${agentId}`,
+        icon: agentId === 'agent-1' ? '🤖' : '🦾',
+        capabilities: ['test'],
+      };
+    }
+    if (agentId === 'aurora-forester') {
+      return {
+        id: 'aurora-forester',
+        name: 'Aurora Forester',
+        category: 'core',
+        personaFile: 'core/aurora-forester.md',
+        description: 'Primary Assistant',
+        icon: '🌲',
+        capabilities: ['team-orchestration'],
+      };
+    }
+    return undefined;
+  },
+  getAllAgents: () => [],
+  getAgentsByCategory: () => [],
+  isAgentRegistered: (id: string) => ['agent-1', 'agent-2', 'aurora-forester'].includes(id),
+  getAllAgentIds: () => ['agent-1', 'agent-2', 'aurora-forester'],
 }));
 
 describe('party-mode routes', () => {
@@ -78,13 +120,23 @@ describe('party-mode routes', () => {
         .send({
           agentIds: ['agent-1', 'agent-2'],
           topic: 'Test topic',
-          maxTurns: 1,
+          config: {
+            moderatorId: null, // Disable moderator for simpler test
+            maxTurns: 1,
+          },
         })
         .expect(200);
 
       expect(response.body.topic).toBe('Test topic');
-      expect(response.body.participants).toEqual(['agent-1', 'agent-2']);
-      // With maxTurns=1 and 2 agents, should have 2 invocations
+      // participants is now an array of PartyParticipant objects
+      expect(response.body.participants).toHaveLength(2);
+      expect(response.body.participants[0].agentId).toBe('agent-1');
+      expect(response.body.participants[1].agentId).toBe('agent-2');
+      // Should have sessionId now
+      expect(response.body.sessionId).toBeDefined();
+      // Should have config
+      expect(response.body.config).toBeDefined();
+      // With 2 agents and no moderator, should have 2 invocations
       expect(mockInvoke).toHaveBeenCalled();
 
       // Verify userId from session was used
@@ -148,19 +200,36 @@ describe('party-mode routes', () => {
           agentIds: ['agent-1', 'agent-2'],
           topic: 'Ongoing discussion',
           userMessage: 'What do you think about X?',
-          history: [
-            { role: 'user', content: 'Initial topic' },
-            { role: 'assistant', content: '[agent-1]: Response 1', agentId: 'agent-1' },
-          ],
         })
         .expect(200);
 
       expect(response.body.responses).toBeDefined();
+      expect(response.body.sessionId).toBeDefined();
       expect(mockInvoke).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: 'user-continue',
         })
       );
+    });
+  });
+
+  describe('GET /api/party-mode/agents (protected)', () => {
+    it('should return 401 without auth', async () => {
+      await request(app)
+        .get('/api/party-mode/agents')
+        .expect(401);
+    });
+
+    it('should return agents grouped by category with valid token', async () => {
+      mockValidateAccessToken.mockResolvedValue('user-list');
+
+      const response = await request(app)
+        .get('/api/party-mode/agents')
+        .set('Authorization', 'Bearer valid-token')
+        .expect(200);
+
+      expect(response.body.categories).toBeDefined();
+      expect(response.body.totalAgents).toBeDefined();
     });
   });
 
