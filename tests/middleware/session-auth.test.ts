@@ -177,19 +177,36 @@ describe('session-auth middleware', () => {
     });
 
     describe('auth service not configured', () => {
-      it('should allow anonymous access in development when not configured', async () => {
+      // FOS-5.6.1 (F-3): DEV_SKIP_AUTH must be explicit, not based on NODE_ENV
+      it('should allow dev-user access when DEV_SKIP_AUTH=true', async () => {
+        const originalSkipAuth = process.env.DEV_SKIP_AUTH;
+        process.env.DEV_SKIP_AUTH = 'true';
+
+        mockReq.headers = { authorization: 'Bearer some-token' };
+
+        await requireSession(mockReq as Request, mockRes as Response, mockNext);
+
+        expect((mockReq as AuthenticatedRequest).userId).toBe('dev-user');
+        expect(mockNext).toHaveBeenCalled();
+
+        process.env.DEV_SKIP_AUTH = originalSkipAuth;
+      });
+
+      it('should return 503 when not configured (even in development without DEV_SKIP_AUTH)', async () => {
         const originalEnv = process.env.NODE_ENV;
+        const originalSkipAuth = process.env.DEV_SKIP_AUTH;
         process.env.NODE_ENV = 'development';
+        delete process.env.DEV_SKIP_AUTH;
 
         mockIsAuthServiceConfigured.mockReturnValue(false);
         mockReq.headers = { authorization: 'Bearer some-token' };
 
         await requireSession(mockReq as Request, mockRes as Response, mockNext);
 
-        expect((mockReq as AuthenticatedRequest).userId).toBe('anonymous-dev');
-        expect(mockNext).toHaveBeenCalled();
+        expect(statusMock).toHaveBeenCalledWith(503);
 
         process.env.NODE_ENV = originalEnv;
+        process.env.DEV_SKIP_AUTH = originalSkipAuth;
       });
 
       it('should return 503 in production when not configured', async () => {
