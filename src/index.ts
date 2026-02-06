@@ -88,10 +88,10 @@ app.use((err: HttpError, _req: express.Request, res: express.Response, _next: ex
 // Export app for testing without starting server
 export { app };
 
-// Start server only when this file is run directly (not imported for testing)
-// Using import.meta.url check for ESM modules
-const isMainModule = process.argv[1]?.endsWith('index.js') || process.argv[1]?.endsWith('index.ts');
-if (isMainModule) {
+// Start server only when not in test environment
+// This allows tests to import the app without starting the server
+const isTestEnvironment = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+if (!isTestEnvironment) {
   const port = config.server.port;
   app.listen(port, () => {
     console.log('===========================================');
