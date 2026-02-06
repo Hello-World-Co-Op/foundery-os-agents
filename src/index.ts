@@ -47,6 +47,11 @@ app.listen(port, () => {
   console.log(`Environment: ${config.server.nodeEnv}`);
   console.log(`Listening on port ${port}`);
   console.log(`API Key configured: ${config.anthropic.apiKey ? 'Yes' : 'No'}`);
+  // FOS-5.6.1 (F-3): Warn if auth bypass is enabled
+  if (process.env.DEV_SKIP_AUTH === 'true') {
+    console.warn('⚠️  WARNING: DEV_SKIP_AUTH=true - Authentication is DISABLED');
+    console.warn('⚠️  DO NOT use this setting in production!');
+  }
   console.log('===========================================');
 });
 

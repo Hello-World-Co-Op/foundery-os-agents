@@ -70,19 +70,18 @@ export async function requireSession(
 ): Promise<void> {
   const startTime = Date.now();
 
-  // Check if auth service is configured (fail gracefully in dev)
-  if (!isAuthServiceConfigured()) {
-    // In development without auth config, allow anonymous access with warning
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(
-        'Warning: AUTH_SERVICE_CANISTER_ID not configured. Allowing anonymous access in development.'
-      );
-      (req as AuthenticatedRequest).userId = 'anonymous-dev';
-      next();
-      return;
-    }
+  // FOS-5.6.1 (F-3): Explicit auth bypass requires DEV_SKIP_AUTH=true
+  // This is safer than using NODE_ENV which may be set by other tools
+  if (process.env.DEV_SKIP_AUTH === 'true') {
+    console.warn('[session-auth] DEV_SKIP_AUTH=true - bypassing authentication (development only)');
+    (req as AuthenticatedRequest).userId = 'dev-user';
+    next();
+    return;
+  }
 
-    // In production, this is a configuration error
+  // Check if auth service is configured
+  if (!isAuthServiceConfigured()) {
+    // Auth service not configured is a configuration error
     sendAuthError(res, 503, 'Service Unavailable', AuthErrorCode.AUTH_NOT_CONFIGURED, 'Authentication service not configured');
     return;
   }
